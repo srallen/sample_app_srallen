@@ -37,11 +37,10 @@ require 'spec_helper'
         it { should have_link('Sign Out', href: signout_path) }
         it { should_not have_link('Sign In', href: signin_path) }
 
-      end
-
-      describe "followed by signout" do
-        before { click_link "Sign Out" }
-        it { should have_link('Sign In') }
+        describe "followed by signout", :js => true do
+          before { click_link "Sign Out" }
+          it { should have_link('Sign In') }
+        end
       end
 
       describe "authorization" do
@@ -109,6 +108,19 @@ require 'spec_helper'
             describe "submitting a PATCH request to the Users#update action" do
               before { patch user_path(wrong_user) }
               specify { expect(response).to redirect_to(root_url) }
+            end
+          end
+
+          describe "in the Microposts controller" do
+
+            describe "submitting to the create action" do
+              before { post microposts_path }
+              specify { expect(response).to redirect_to(signin_path) }
+            end
+
+            describe "submitting to the destroy action" do
+              before { delete micropost_path(FactoryGirl.create(:micropost)) }
+              specify { expect(response).to redirect_to(signin_path) }
             end
           end
         end
